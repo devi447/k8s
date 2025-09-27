@@ -1,0 +1,10 @@
+resources:
+  - ../../base
+
+namespace: reactjs
+
+images:
+  - name: devidevops447/reactjs-beta:v22
+
+patchesStrategicMerge:
+  - reactjs-service-dev.yaml
