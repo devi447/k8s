@@ -4,7 +4,7 @@ resources:
 namespace: reactjs
 
 images:
-  - name: devidevops447/wordpress-beta
+  - name: devidevops447/wordpress-beta:v22
     newTag: v55
 
 patchesStrategicMerge:
