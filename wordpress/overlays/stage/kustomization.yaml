@@ -4,7 +4,7 @@ resources:
 namespace: reactjs
 
 images:
-  - name: devidevops447/wordpress-beta:v22
+  - name: devidevops447/wordpress-beta:v12345
 
 patchesStrategicMerge:
   - wordpress-service-dev.yaml
