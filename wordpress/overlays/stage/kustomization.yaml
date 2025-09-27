@@ -1,0 +1,11 @@
+resources:
+  - ../../base
+
+namespace: reactjs
+
+images:
+  - name: devidevops447/wordpress-beta
+    newTag: v55
+
+patchesStrategicMerge:
+  - wordpress-service-dev.yaml
