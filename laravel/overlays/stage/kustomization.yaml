@@ -1,0 +1,10 @@
+resources:
+  - ../../base
+
+namespace: reactjs
+
+images:
+  - name: devidevops447/wordpress-beta:v22
+
+patchesStrategicMerge:
+  - wordpress-service-dev.yaml
