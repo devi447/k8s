@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: laravel
-          image: devidevops447/laravel-beta:test
+          image: devidevops447/laravel-beta:v27
           ports:
             - containerPort: 80
 ---
