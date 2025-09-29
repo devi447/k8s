@@ -21,10 +21,6 @@ spec:
           image: devidevops447/wordpress-beta:v5555
           ports:
             - containerPort: 80
-      initContainers:
-        - name: init-permissions
-          image: busybox
-          command: ["sh", "-c", "chown -R www-data:www-data /var/www/html/wp-content/uploads"]
           volumeMounts:
             - name: wordpress-pvc
               mountPath: /var/www/html/wp-content/uploads
