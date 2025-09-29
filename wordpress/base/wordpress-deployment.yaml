@@ -12,10 +12,16 @@ spec:
       app: wordpress
   template:
     metadata:
-      name: wordpress
       labels:
         app: wordpress
     spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R www-data:www-data /var/www/html/wp-content/uploads"]
+          volumeMounts:
+            - name: wordpress-pvc
+              mountPath: /var/www/html/wp-content/uploads
       containers:
         - name: wordpress
           image: devidevops447/wordpress-beta:v5555
@@ -27,7 +33,6 @@ spec:
             - name: wp-config-volume
               mountPath: /var/www/html/wp-config.php
               subPath: wp-config.php
-
           env:
             - name: WORDPRESS_DB_HOST
               valueFrom:
