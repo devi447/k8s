@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: wordpress-deployment
   namespace: reactjs
-  labels:
-    app: wordpress
 spec:
   replicas: 1
   selector:
@@ -19,43 +17,47 @@ spec:
       - name: init-permissions
         image: busybox
         command: ["sh", "-c", "chown -R 33:33 /var/www/html/wp-content/uploads"]
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
 
       containers:
-        - name: wordpress
-          image: devidevops447/wordpress-beta:v5555
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - name: wordpress-pvc
-              mountPath: /var/www/html/wp-content/uploads
-            - name: wp-config-volume
-              mountPath: /var/www/html/wp-config.php
-              subPath: wp-config.php
-          env:
-            - name: WORDPRESS_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: wordpress-secret
-                  key: WORDPRESS_DB_HOST
-            - name: WORDPRESS_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: wordpress-secret
-                  key: WORDPRESS_DB_NAME
-            - name: WORDPRESS_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: wordpress-secret
-                  key: WORDPRESS_DB_USER
-            - name: WORDPRESS_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: wordpress-secret
-                  key: WORDPRESS_DB_PASSWORD
-      volumes:
-        - name: wp-config-volume
-          configMap:
-            name: wp-config
+      - name: wordpress
+        image: devidevops447/wordpress-beta:v12345
+        ports:
+        - containerPort: 80
+        volumeMounts:
         - name: wordpress-pvc
-          persistentVolumeClaim:
-            claimName: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+        - name: wp-config-volume
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+        env:
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_HOST
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_NAME
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_USER
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_PASSWORD
+
+      volumes:
+      - name: wp-config-volume
+        configMap:
+          name: wp-config
+      - name: wordpress-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
