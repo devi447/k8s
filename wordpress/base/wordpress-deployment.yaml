@@ -42,3 +42,10 @@ spec:
                 secretKeyRef:
                   name: wordpress-secret
                   key: WORDPRESS_DB_PASSWORD
+      volumes:
+        - name: wp-config-volume
+          configMap:
+            name: wp-config
+        - name: wordpress-pvc
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
