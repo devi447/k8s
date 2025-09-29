@@ -21,6 +21,12 @@ spec:
           image: devidevops447/wordpress-beta:v5555
           ports:
             - containerPort: 80
+            volumeMounts:
+              - name: wp-config-volume
+                mountPath: /var/www/html/wp-config.php
+                subPath: wp-config.php
+              - name: wordpress-pvc
+                mountPath: /var/www/html/wp-content/uploads 
           env:
             - name: WORDPRESS_DB_HOST
               valueFrom:
