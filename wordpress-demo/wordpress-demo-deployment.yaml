@@ -13,10 +13,10 @@ spec:
       labels:
         app: wordpress-demo
     spec:
-      initContainers:
-      - name: init-permissions
-        image: busybox
-        command: ["sh", "-c", "chown -R 33:33 /var/www/html/wp-content/uploads"]
+      # initContainers:
+      # - name: init-permissions
+      #   image: busybox
+      #   command: ["sh", "-c", "chown -R 33:33 /var/www/html/wp-content/uploads"]
         # volumeMounts:
         # - name: wordpress-demo-pvc
         #   mountPath: /var/www/html/wp-content/uploads
