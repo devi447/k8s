@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: wp-config
-  namespace: reactjs
+  namespace: workshop
 data:
   wp-config.php: |
     <?php
