@@ -1,23 +1,7 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: wordpress-restored-pv
-spec:
-  capacity:
-    storage: 5Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: ""
-  csi:
-    driver: ebs.csi.aws.com
-    volumeHandle: vol-0f51e01a8f1e6b164   # <-- new EBS volume ID
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: wordpress-restored-pvc
+  name: wordpress-pvc
   namespace: workshop
 spec:
   accessModes:
@@ -25,5 +9,4 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: ""
-  volumeName: wordpress-restored-pv
+  storageClassName: gp3
