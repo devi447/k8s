@@ -16,7 +16,7 @@ spec:
       initContainers:
       - name: init-permissions
         image: busybox
-        command: ["sh", "-c", "chown -R 33:33 /var/www/html/wp-content/uploads"]
+        command: ["sh", "-c", "chmod -R 777 /var/www/html/wp-content/uploads || true"]
         volumeMounts:
         - name: wordpress-pvc
           mountPath: /var/www/html/wp-content/uploads
