@@ -9,5 +9,5 @@ spec:
     app: wordpress
   ports:
     - port: 80        # Service port
-      targetPort: 80  # Container port
+      targetPort: 30011  # Container port
       protocol: TCP
