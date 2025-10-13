@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fflask-backend-deployment
+  namespace: workshop
+  labels:
+    app: flask-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-backend
+  template:
+    metadata:
+      name: flask-backend
+      labels:
+        app: flask-backend
+    spec:
+      containers:
+        - name: flask-backend
+          image: devidevops447/flask-backend-beta:test21
+          ports:
+            - containerPort: 80
