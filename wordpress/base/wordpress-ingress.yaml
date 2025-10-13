@@ -47,4 +47,4 @@ spec:
               service:
                 name: wordpress-service
                 port:
-                  number: 8070
+                  number: 80

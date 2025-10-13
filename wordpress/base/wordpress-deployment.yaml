@@ -25,7 +25,7 @@ spec:
       - name: wordpress
         image: devidevops447/wordpress-beta:v22
         ports:
-        - containerPort: 8070
+        - containerPort: 80
         volumeMounts:
         - name: wordpress-pvc
           mountPath: /var/www/html/wp-content/uploads

@@ -8,6 +8,6 @@ spec:
   selector:
     app: wordpress
   ports:
-    - port: 8070        # Service port
-      targetPort: 8070  # Container port
+    - port: 80        # Service port
+      targetPort: 80  # Container port
       protocol: TCP
