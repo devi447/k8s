@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fflask-backend-deployment
+  name: reactjs-frontend-deployment
   namespace: workshop
   labels:
-    app: flask-backend
+    app: reactjs-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flask-backend
+      app: reactjs-frontend
   template:
     metadata:
-      name: flask-backend
+      name: reactjs-frontend
       labels:
-        app: flask-backend
+        app: reactjs-frontend
     spec:
       containers:
-        - name: flask-backend
-          image: devidevops447/flask-backend-beta:test21
+        - name: reactjs-frontend
+          image: devidevops447/reactjs-frontend-beta:test21
           ports:
-            - containerPort: 5000
+            - containerPort: 3000
