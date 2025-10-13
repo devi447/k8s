@@ -8,7 +8,7 @@ spec:
     app: reactjs-frontend
   ports:
     - protocol: TCP
-      port: 80         # Exposed to Ingress
-      targetPort: 80   # nginx inside container
+      port: 3000         # Exposed to Ingress
+      targetPort: 3000   # nginx inside container
   type: ClusterIP
 
