@@ -8,6 +8,6 @@ spec:
     app: flask-backend
   ports:
     - protocol: TCP
-      port: 80         # <-- Exposed to Ingress
+      port: 5000         # <-- Exposed to Ingress
       targetPort: 5000 # <-- Flask app inside container
   type: ClusterIP
