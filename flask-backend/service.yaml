@@ -4,10 +4,10 @@ metadata:
   name: flask-backend-service
   namespace: workshop
 spec:
-  type: ClusterIP  # Changed from NodePort
   selector:
     app: flask-backend
   ports:
-    - port: 80        # Service port
-      targetPort: 80  # Container port
-      protocol: TCP
+    - protocol: TCP
+      port: 80         # <-- Exposed to Ingress
+      targetPort: 5000 # <-- Flask app inside container
+  type: ClusterIP
