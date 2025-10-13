@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip          # ✅ Add this line
 spec:
   rules:
   - host: reactjs-frontend.showmysite.click
@@ -17,4 +18,4 @@ spec:
           service:
             name: reactjs-frontend-service
             port:
-              number: 80
+              number: 3000
