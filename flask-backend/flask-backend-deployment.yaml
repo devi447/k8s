@@ -18,6 +18,6 @@ spec:
     spec:
       containers:
         - name: flask-backend
-          image: devidevops447/flask-backend-beta:test21
+          image: devidevops447/flask-backend-beta:v44
           ports:
             - containerPort: 5000
