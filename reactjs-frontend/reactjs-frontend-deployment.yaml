@@ -20,4 +20,4 @@ spec:
         - name: reactjs-frontend
           image: devidevops447/reactjs-frontend-beta:v5.44
           ports:
-            - containerPort: 3000
+            - containerPort: 80
