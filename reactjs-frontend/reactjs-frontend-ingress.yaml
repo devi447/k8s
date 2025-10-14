@@ -8,14 +8,15 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
 spec:
+  ingressClassName: alb
   rules:
-    - host: reactjs-frontend.showmysite.click
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: reactjs-frontend-service
-                port:
-                  number: 80
+  - host: reactjs-frontend.showmysite.click
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: reactjs-frontend-service
+            port:
+              number: 80
