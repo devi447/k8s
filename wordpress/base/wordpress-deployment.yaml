@@ -23,7 +23,7 @@ spec:
 
       containers:
       - name: wordpress
-        image: devidevops447/wordpress-beta:v2121212
+        image: devidevops447/wordpress-beta:v434343
         ports:
         - containerPort: 80
         volumeMounts:
