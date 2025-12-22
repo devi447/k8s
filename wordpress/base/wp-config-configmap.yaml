@@ -49,13 +49,13 @@ data:
     define( 'DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress_db') );
 
     /** Database username */
-    define( 'DB_USER', getenv_docker('WORDPRESS_DB_USER', 'adminuser') );
+    define( 'DB_USER', getenv_docker('WORDPRESS_DB_USER', 'root') );
 
     /** Database password */
-    define( 'DB_PASSWORD', getenv_docker('WORDPRESS_DB_PASSWORD', 'w4N%8K34Y3MV') );
+    define( 'DB_PASSWORD', getenv_docker('WORDPRESS_DB_PASSWORD', 'KXGlw48TycIb65eo') );
 
     /** Database hostname */
-    define( 'DB_HOST', getenv_docker('WORDPRESS_DB_HOST', '54.193.153.24') );
+    define( 'DB_HOST', getenv_docker('WORDPRESS_DB_HOST', 'mysql-rds.cbkw6wwi69en.ap-south-1.rds.amazonaws.com') );
 
     /** Database charset to use in creating database tables. */
     define( 'DB_CHARSET', getenv_docker('WORDPRESS_DB_CHARSET', 'utf8') );
