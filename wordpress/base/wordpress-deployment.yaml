@@ -62,7 +62,3 @@ spec:
       - name: wordpress-pvc
         persistentVolumeClaim:
           claimName: wordpress-pvc
-
-      - name: upload-volume
-        configMap:
-          name: upload
