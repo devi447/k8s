@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: reactjs-frontend
   namespace: workshop
   labels:
-    role: frontend
+    role: reactjs-frontend
     env: demo
 spec:
   replicas: 1
@@ -15,14 +15,14 @@ spec:
       maxUnavailable: 25%
   selector:
     matchLabels:
-      role: frontend
+      role: reactjs-frontend
   template:
     metadata:
       labels:
-        role: frontend
+        role: reactjs-frontend
     spec:
       containers:
-      - name: frontend
+      - name: reactjs-frontend
         image: public.ecr.aws/v8e6s9s3/three-tier-frontend:v32
         imagePullPolicy: Always
         env:
