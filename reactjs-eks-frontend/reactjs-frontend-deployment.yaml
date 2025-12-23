@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: devidevops447/reactjs-eks-frontend:v67
+        image: public.ecr.aws/v8e6s9s3/three-tier-frontend:v32
         imagePullPolicy: Always
         env:
           - name: REACT_APP_BACKEND_URL
