@@ -1,22 +1,13 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  name: reactjs-frontend-ingress
+  name: wreactjs-frontend-service
   namespace: workshop
-  annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
 spec:
-  ingressClassName: alb
-  rules:
-  - host: reactjs-frontend.showmysite.click
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: reactjs-frontend-service
-            port:
-              number: 80
+  type: ClusterIP  # Changed from NodePort
+  selector:
+    app: reactjs-frontend
+  ports:
+    - port: 80        # Service port
+      targetPort: 80  # Container port
+      protocol: TCP
