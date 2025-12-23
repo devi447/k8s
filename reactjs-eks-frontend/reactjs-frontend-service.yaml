@@ -8,6 +8,6 @@ spec:
   selector:
     app: reactjs-frontend
   ports:
-    - port: 80        # Service port
-      targetPort: 80  # Container port
+    - port: 3000        # Service port
+      targetPort: 3000  # Container port
       protocol: TCP
