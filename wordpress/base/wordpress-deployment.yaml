@@ -16,14 +16,14 @@ spec:
       initContainers:
       - name: init-permissions
         image: busybox
-        command: ["sh", "-c", "chmod -R 777 /var/www/html/wp-content/uploads || true"]
+        command: ["sh", "-c", "chmod -R 775 /var/www/html/wp-content/uploads || true"]
         volumeMounts:
         - name: wordpress-pvc
           mountPath: /var/www/html/wp-content/uploads
 
       containers:
       - name: wordpress
-        image: devidevops447/wordpress-beta:v4343
+        image: devidevops447/wordpress-beta:v2.70
         ports:
         - containerPort: 80
         volumeMounts:
@@ -55,10 +55,10 @@ spec:
               key: WORDPRESS_DB_PASSWORD
 
       volumes:
-      - name: wp-config-volume
-        configMap:
-          name: wp-config
-
       - name: wordpress-pvc
         persistentVolumeClaim:
           claimName: wordpress-pvc
+
+      - name: wp-config-volume
+        configMap:
+          name: wp-config
