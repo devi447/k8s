@@ -4,10 +4,10 @@ metadata:
   name: wordpress-service
   namespace: workshop
 spec:
-  type: ClusterIP  # Changed from NodePort
+  type: ClusterIP
   selector:
     app: wordpress
   ports:
-    - port: 80        # Service port
-      targetPort: 80  # Container port
+    - port: 80
+      targetPort: 80
       protocol: TCP
