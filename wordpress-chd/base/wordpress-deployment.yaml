@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-chd-deployment
+  namespace: workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress-chd
+  template:
+    metadata:
+      labels:
+        app: wordpress-chd
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            mkdir -p /var/www/html/wp-content/uploads &&
+            chown -R 33:33 /var/www/html/wp-content &&
+            chmod -R 775 /var/www/html/wp-content
+        volumeMounts:
+        - name: wordpress-chd-pvc
+          mountPath: /var/www/html/wp-content/uploads
+
+      containers:
+      - name: wordpress-chd
+        image: devidevops447/wordpress-beta:v2.70
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: wordpress-chd-pvc
+          mountPath: /var/www/html/wp-content/uploads
+        - name: wp-config-volume
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+        env:
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_HOST
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-chd-secret
+              key: WORDPRESS_DB_NAME
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-chd-secret
+              key: WORDPRESS_DB_USER
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-chd-secret
+              key: WORDPRESS_DB_PASSWORD
+
+      volumes:
+      - name: wordpress-chd-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-chd-pvc
+
+      - name: wp-config-volume
+        configMap:
+          name: wp-config
