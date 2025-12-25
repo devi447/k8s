@@ -29,7 +29,7 @@ spec:
 
       containers:
       - name: wordpress-chd
-        image: devidevops447/wordpress-beta:v2.70
+        image: devidevops447/wordpress-chd-beta:v2.70
         ports:
         - containerPort: 80
         volumeMounts:
@@ -42,7 +42,7 @@ spec:
         - name: WORDPRESS_DB_HOST
           valueFrom:
             secretKeyRef:
-              name: wordpress-secret
+              name: wordpress-chd-secret
               key: WORDPRESS_DB_HOST
         - name: WORDPRESS_DB_NAME
           valueFrom:
