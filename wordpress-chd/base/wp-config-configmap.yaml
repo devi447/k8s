@@ -45,8 +45,8 @@ data:
     }
 
     // ** Database settings - You can get this info from your web host ** //
-    /** The name of the database for WordPress */
-    define( 'DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress-chd_db') );
+    /** The name of the database for wordpress-chd */
+    define( 'DB_NAME', getenv_docker('WORDPRESS_CHD_DB_NAME', 'wordpress-chd_db') );
 
     /** Database username */
     define( 'DB_USER', getenv_docker('WORDPRESS_DB_USER', 'admin') );
