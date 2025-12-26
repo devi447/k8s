@@ -35,7 +35,7 @@ spec:
         volumeMounts:
         - name: wordpress-chd-pvc
           mountPath: /var/www/html/wp-content/uploads
-        - name: wp-config-volume
+        - name: wp-config-chd-volume
           mountPath: /var/www/html/wp-config.php
           subPath: wp-config.php
         env:
@@ -65,6 +65,6 @@ spec:
         persistentVolumeClaim:
           claimName: wordpress-chd-pvc
 
-      - name: wp-config-volume
+      - name: wp-config-chd-volume
         configMap:
-          name: wp-config
+          name: wp-config-chd
