@@ -1,0 +1,742 @@
+----------wordpress-deployment.yaml---------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            mkdir -p /var/www/html/wp-content/uploads &&
+            chown -R 33:33 /var/www/html/wp-content &&
+            chmod -R 775 /var/www/html/wp-content
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+
+      containers:
+      - name: wordpress
+        image: devidevops447/wordpress-beta:v323232
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+        - name: wp-config-volume
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+        env:
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_HOST
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_NAME
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_USER
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_PASSWORD
+
+      volumes:
+      - name: wordpress-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
+
+      - name: wp-config-volume
+        configMap:
+          name: wp-config
+
+_______wordpress-ingress.yaml__________
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+  namespace: workshop
+  annotations:
+    alb.ingress.kubernetes.io/group.name: demo-lb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+spec:
+  ingressClassName: alb
+  rules:
+  - host: wordpress.showmysite.click
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wordpress-service
+            port:
+              number: 80
+
+____wordpress-pvc.yaml_______
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  namespace: workshop
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: gp3
+
+______wordpress-secret.yaml________
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wordpress-secret
+  namespace: workshop
+type: Opaque
+stringData:
+  WORDPRESS_DB_HOST: rds-mysql.cbkw6wwi69en.ap-south-1.rds.amazonaws.com
+  WORDPRESS_DB_NAME: wordpress_db
+  WORDPRESS_DB_USER: admin
+  WORDPRESS_DB_PASSWORD: DRn2pNfiu5yR4dQ2UFsR
+  
+
+------wordpress-service.yaml ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: workshop
+spec:
+  type: ClusterIP
+  selector:
+    app: wordpress
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+
+---------wp-config-configmap.yaml---------------
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-config
+  namespace: workshop
+data:
+  wp-config.php: |
+    <?php
+    /**
+     * The base configuration for WordPress
+     *
+     * The wp-config.php creation script uses this file during the installation.
+     * You don't have to use the website, you can copy this file to "wp-config.php"
+     * and fill in the values.
+     *
+     * This file contains the following configurations:
+     *
+     * * Database settings
+     * * Secret keys
+     * * Database table prefix
+     * * ABSPATH
+     *
+     * This has been slightly modified (to read environment variables) for use in Docker.
+     *
+     * @link https://developer.wordpress.org/advanced-administration/wordpress/wp-config/
+     *
+     * @package WordPress
+     */
+
+    // IMPORTANT: this file needs to stay in-sync with https://github.com/WordPress/WordPress/blob/master/wp-config-sample.php
+    // (it gets parsed by the upstream wizard in https://github.com/WordPress/WordPress/blob/f27cb65e1ef25d11b535695a660e7282b98eb742/wp-admin/setup-config.php#L356-L392)
+
+    // a helper function to lookup "env_FILE", "env", then fallback
+    if (!function_exists('getenv_docker')) {
+        // https://github.com/docker-library/wordpress/issues/588 (WP-CLI will load this file 2x)
+        function getenv_docker($env, $default) {
+            if ($fileEnv = getenv($env . '_FILE')) {
+                return rtrim(file_get_contents($fileEnv), "\r\n");
+            } else if (($val = getenv($env)) !== false) {
+                return $val;
+            } else {
+                return $default;
+            }
+        }
+    }
+
+    // ** Database settings - You can get this info from your web host ** //
+    /** The name of the database for WordPress */
+    define( 'DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress_db') );
+
+    /** Database username */
+    define( 'DB_USER', getenv_docker('WORDPRESS_DB_USER', 'admin') );
+
+    /** Database password */
+    define( 'DB_PASSWORD', getenv_docker('WORDPRESS_DB_PASSWORD', 'DRn2pNfiu5yR4dQ2UFsR') );
+
+    /** Database hostname */
+    define( 'DB_HOST', getenv_docker('WORDPRESS_DB_HOST', 'rds-mysql.cbkw6wwi69en.ap-south-1.rds.amazonaws.com') );
+
+    /** Database charset to use in creating database tables. */
+    define( 'DB_CHARSET', getenv_docker('WORDPRESS_DB_CHARSET', 'utf8') );
+
+    /** The database collate type. Don't change this if in doubt. */
+    define( 'DB_COLLATE', getenv_docker('WORDPRESS_DB_COLLATE', '') );
+
+    /**#@+
+     * Authentication unique keys and salts.
+     */
+    define( 'AUTH_KEY',         getenv_docker('WORDPRESS_AUTH_KEY',         'db7ffca46995271c9bfb7a44908b4b225cd585ce') );
+    define( 'SECURE_AUTH_KEY',  getenv_docker('WORDPRESS_SECURE_AUTH_KEY',  '459c67969dfbf1fcfed3320982471511e9f01fe9') );
+    define( 'LOGGED_IN_KEY',    getenv_docker('WORDPRESS_LOGGED_IN_KEY',    '5e07f95b3e0113d7fd8e5c28c8e65b971ed0e293') );
+    define( 'NONCE_KEY',        getenv_docker('WORDPRESS_NONCE_KEY',        'b1aac933b215286f6e9dcc856053e0dc1124e609') );
+    define( 'AUTH_SALT',        getenv_docker('WORDPRESS_AUTH_SALT',        'b5d5d1bc76a8a1dea5244c715bbb1c91dfe09559') );
+    define( 'SECURE_AUTH_SALT', getenv_docker('WORDPRESS_SECURE_AUTH_SALT', 'd45bee865fd4e05fe2ac2605ae828924c31f3dcb') );
+    define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   '7951549b6308d58c13c2cab4a88a1d3b52924a45') );
+    define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       'fccca06f959ba91ae8736ba41b213fb2f8bcda2c') );
+    /**#@-*/
+
+    /**
+     * WordPress database table prefix.
+     */
+    $table_prefix = getenv_docker('WORDPRESS_TABLE_PREFIX', 'wp_');
+
+    /**
+     * For developers: WordPress debugging mode.
+     */
+    define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', '') );
+
+    /* Add any custom values between this line and the "stop editing" line. */
+
+    // If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
+        $_SERVER['HTTPS'] = 'on';
+    }
+
+    if ($configExtra = getenv_docker('WORDPRESS_CONFIG_EXTRA', '')) {
+        eval($configExtra);
+    }
+
+    /* That's all, stop editing! Happy publishing. */
+
+    /** Absolute path to the WordPress directory. */
+    if ( ! defined( 'ABSPATH' ) ) {
+        define( 'ABSPATH', __DIR__ . '/' );
+    }
+
+    /** Sets up WordPress vars and included files. */
+    require_once ABSPATH . 'wp-settings.php';
+
+-----------------------------
+I want to create stage , uat and prod for https://wordpress.showmysite.click/
+
+Please share all steps using helm
+FYI ,  Actuallly I am currently using structure like this  git hub where I have source code then clone from jenkins and build the code and push to docker hub then run 2nd CD pipe line and add tag on k8s manifest file the argo pull thes image and deploy to eks cluster  ..........please share stage, uat and prod env regarding the same
+
+_-------
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Still now working .Please correct it ............this is my current k8s file now
+
+replicaCount: 1
+
+image:
+  repository: devidevops447/wordpress-beta
+  tag: latest
+
+persistence:
+  size: 5Gi
+  storageClass: gp3
+
+database:
+  host: rds-mysql.cbkw6wwi69en.ap-south-1.rds.amazonaws.com
+  name: wordpress_db
+  user: admin
+  password: DRn2pNfiu5yR4dQ2UFsR
+
+------------
+replicaCount: 2
+
+image:
+  tag: uat
+
+ingress:
+  host: uat.wordpress.showmysite.click
+  certificateArn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
+
+--------
+replicaCount: 1
+
+image:
+  tag: stage
+
+ingress:
+  host: stage.wordpress.showmysite.click
+  certificateArn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
+-----------
+replicaCount: 3
+
+image:
+  tag: prod
+
+ingress:
+  host: wordpress.showmysite.click
+  certificateArn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
+
+_-----------------
+
+apiVersion: v2
+name: wordpress
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "1.16.0"
+
+_____________
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: wordpress
+  ports:
+  - port: 80
+    targetPort: 80
+
+----
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wordpress-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  WORDPRESS_DB_HOST: {{ .Values.database.host }}
+  WORDPRESS_DB_NAME: {{ .Values.database.name }}
+  WORDPRESS_DB_USER: {{ .Values.database.user }}
+  WORDPRESS_DB_PASSWORD: {{ .Values.database.password }}
+
+-----------------
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+
+____
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    alb.ingress.kubernetes.io/group.name: demo-lb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certificateArn }}
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+spec:
+  ingressClassName: alb
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wordpress-service
+            port:
+              number: 80
+
+----------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            mkdir -p /var/www/html/wp-content/uploads &&
+            chown -R 33:33 /var/www/html/wp-content &&
+            chmod -R 775 /var/www/html/wp-content
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+
+      containers:
+      - name: wordpress
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+        - name: wp-config-volume
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+
+        envFrom:
+        - secretRef:
+            name: wordpress-secret
+
+      volumes:
+      - name: wordpress-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
+
+      - name: wp-config-volume
+        configMap:
+          name: wp-config
+
+---------------
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-config
+  namespace: {{ .Release.Namespace }}
+data:
+  wp-config.php: |
+{{ .Files.Get "wp-config.php" | indent 4 }}
+
+-------------------
+
+===> this is my old file which was working without helm please check below 
+
+----------wordpress-deployment.yaml---------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: workshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            mkdir -p /var/www/html/wp-content/uploads &&
+            chown -R 33:33 /var/www/html/wp-content &&
+            chmod -R 775 /var/www/html/wp-content
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+
+      containers:
+      - name: wordpress
+        image: devidevops447/wordpress-beta:v323232
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: wordpress-pvc
+          mountPath: /var/www/html/wp-content/uploads
+        - name: wp-config-volume
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+        env:
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_HOST
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_NAME
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_USER
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secret
+              key: WORDPRESS_DB_PASSWORD
+
+      volumes:
+      - name: wordpress-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
+
+      - name: wp-config-volume
+        configMap:
+          name: wp-config
+
+_______wordpress-ingress.yaml__________
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+  namespace: workshop
+  annotations:
+    alb.ingress.kubernetes.io/group.name: demo-lb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+spec:
+  ingressClassName: alb
+  rules:
+  - host: wordpress.showmysite.click
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wordpress-service
+            port:
+              number: 80
+
+____wordpress-pvc.yaml_______
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  namespace: workshop
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: gp3
+
+______wordpress-secret.yaml________
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wordpress-secret
+  namespace: workshop
+type: Opaque
+stringData:
+  WORDPRESS_DB_HOST: rds-mysql.cbkw6wwi69en.ap-south-1.rds.amazonaws.com
+  WORDPRESS_DB_NAME: wordpress_db
+  WORDPRESS_DB_USER: admin
+  WORDPRESS_DB_PASSWORD: DRn2pNfiu5yR4dQ2UFsR
+  
+
+------wordpress-service.yaml ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: workshop
+spec:
+  type: ClusterIP
+  selector:
+    app: wordpress
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+
+---------wp-config-configmap.yaml---------------
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-config
+  namespace: workshop
+data:
+  wp-config.php: |
+    <?php
+    /**
+     * The base configuration for WordPress
+     *
+     * The wp-config.php creation script uses this file during the installation.
+     * You don't have to use the website, you can copy this file to "wp-config.php"
+     * and fill in the values.
+     *
+     * This file contains the following configurations:
+     *
+     * * Database settings
+     * * Secret keys
+     * * Database table prefix
+     * * ABSPATH
+     *
+     * This has been slightly modified (to read environment variables) for use in Docker.
+     *
+     * @link https://developer.wordpress.org/advanced-administration/wordpress/wp-config/
+     *
+     * @package WordPress
+     */
+
+    // IMPORTANT: this file needs to stay in-sync with https://github.com/WordPress/WordPress/blob/master/wp-config-sample.php
+    // (it gets parsed by the upstream wizard in https://github.com/WordPress/WordPress/blob/f27cb65e1ef25d11b535695a660e7282b98eb742/wp-admin/setup-config.php#L356-L392)
+
+    // a helper function to lookup "env_FILE", "env", then fallback
+    if (!function_exists('getenv_docker')) {
+        // https://github.com/docker-library/wordpress/issues/588 (WP-CLI will load this file 2x)
+        function getenv_docker($env, $default) {
+            if ($fileEnv = getenv($env . '_FILE')) {
+                return rtrim(file_get_contents($fileEnv), "\r\n");
+            } else if (($val = getenv($env)) !== false) {
+                return $val;
+            } else {
+                return $default;
+            }
+        }
+    }
+
+    // ** Database settings - You can get this info from your web host ** //
+    /** The name of the database for WordPress */
+    define( 'DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress_db') );
+
+    /** Database username */
+    define( 'DB_USER', getenv_docker('WORDPRESS_DB_USER', 'admin') );
+
+    /** Database password */
+    define( 'DB_PASSWORD', getenv_docker('WORDPRESS_DB_PASSWORD', 'DRn2pNfiu5yR4dQ2UFsR') );
+
+    /** Database hostname */
+    define( 'DB_HOST', getenv_docker('WORDPRESS_DB_HOST', 'rds-mysql.cbkw6wwi69en.ap-south-1.rds.amazonaws.com') );
+
+    /** Database charset to use in creating database tables. */
+    define( 'DB_CHARSET', getenv_docker('WORDPRESS_DB_CHARSET', 'utf8') );
+
+    /** The database collate type. Don't change this if in doubt. */
+    define( 'DB_COLLATE', getenv_docker('WORDPRESS_DB_COLLATE', '') );
+
+    /**#@+
+     * Authentication unique keys and salts.
+     */
+    define( 'AUTH_KEY',         getenv_docker('WORDPRESS_AUTH_KEY',         'db7ffca46995271c9bfb7a44908b4b225cd585ce') );
+    define( 'SECURE_AUTH_KEY',  getenv_docker('WORDPRESS_SECURE_AUTH_KEY',  '459c67969dfbf1fcfed3320982471511e9f01fe9') );
+    define( 'LOGGED_IN_KEY',    getenv_docker('WORDPRESS_LOGGED_IN_KEY',    '5e07f95b3e0113d7fd8e5c28c8e65b971ed0e293') );
+    define( 'NONCE_KEY',        getenv_docker('WORDPRESS_NONCE_KEY',        'b1aac933b215286f6e9dcc856053e0dc1124e609') );
+    define( 'AUTH_SALT',        getenv_docker('WORDPRESS_AUTH_SALT',        'b5d5d1bc76a8a1dea5244c715bbb1c91dfe09559') );
+    define( 'SECURE_AUTH_SALT', getenv_docker('WORDPRESS_SECURE_AUTH_SALT', 'd45bee865fd4e05fe2ac2605ae828924c31f3dcb') );
+    define( 'LOGGED_IN_SALT',   getenv_docker('WORDPRESS_LOGGED_IN_SALT',   '7951549b6308d58c13c2cab4a88a1d3b52924a45') );
+    define( 'NONCE_SALT',       getenv_docker('WORDPRESS_NONCE_SALT',       'fccca06f959ba91ae8736ba41b213fb2f8bcda2c') );
+    /**#@-*/
+
+    /**
+     * WordPress database table prefix.
+     */
+    $table_prefix = getenv_docker('WORDPRESS_TABLE_PREFIX', 'wp_');
+
+    /**
+     * For developers: WordPress debugging mode.
+     */
+    define( 'WP_DEBUG', !!getenv_docker('WORDPRESS_DEBUG', '') );
+
+    /* Add any custom values between this line and the "stop editing" line. */
+
+    // If we're behind a proxy server and using HTTPS, we need to alert WordPress of that fact
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
+        $_SERVER['HTTPS'] = 'on';
+    }
+
+    if ($configExtra = getenv_docker('WORDPRESS_CONFIG_EXTRA', '')) {
+        eval($configExtra);
+    }
+
+    /* That's all, stop editing! Happy publishing. */
+
+    /** Absolute path to the WordPress directory. */
+    if ( ! defined( 'ABSPATH' ) ) {
+        define( 'ABSPATH', __DIR__ . '/' );
+    }
+
+    /** Sets up WordPress vars and included files. */
+    require_once ABSPATH . 'wp-settings.php';
+---------------------
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

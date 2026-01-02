@@ -13,3 +13,8 @@ database:
   name: wordpress_db
   user: admin
   password: DRn2pNfiu5yR4dQ2UFsR
+
+ingress:
+  enabled: false
+  host: ""
+  certificateArn: ""
