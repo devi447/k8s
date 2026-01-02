@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: devidevops447/wordpress-beta
-  tag: v287
+  tag: v287.1
   pullPolicy: IfNotPresent
 
 ingress:
