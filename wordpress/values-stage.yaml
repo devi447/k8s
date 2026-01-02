@@ -1,7 +1,9 @@
 replicaCount: 1
 
 image:
-  tag: stage
+  repository: devidevops447/wordpress-beta
+  tag: v287
+  pullPolicy: IfNotPresent
 
 ingress:
   enabled: true
