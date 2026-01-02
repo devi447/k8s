@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wordpress-deployment
-  namespace: workshop
+  name: wordpress
+  namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: wordpress
@@ -29,36 +29,20 @@ spec:
 
       containers:
       - name: wordpress
-        image: devidevops447/wordpress-beta:v323232
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
         - containerPort: 80
+
         volumeMounts:
         - name: wordpress-pvc
           mountPath: /var/www/html/wp-content/uploads
         - name: wp-config-volume
           mountPath: /var/www/html/wp-config.php
           subPath: wp-config.php
-        env:
-        - name: WORDPRESS_DB_HOST
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_HOST
-        - name: WORDPRESS_DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_NAME
-        - name: WORDPRESS_DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_USER
-        - name: WORDPRESS_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_PASSWORD
+
+        envFrom:
+        - secretRef:
+            name: wordpress-secret
 
       volumes:
       - name: wordpress-pvc

@@ -1,0 +1,8 @@
+replicaCount: 3
+
+image:
+  tag: prod
+
+ingress:
+  host: wordpress.showmysite.click
+  certificateArn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0

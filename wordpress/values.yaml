@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: devidevops447/wordpress-beta
+  tag: latest
+
+persistence:
+  size: 5Gi
+  storageClass: gp3
+
+database:
+  host: rds-mysql.cbkw6wwi69en.ap-south-1.rds.amazonaws.com
+  name: wordpress_db
+  user: admin
+  password: DRn2pNfiu5yR4dQ2UFsR
