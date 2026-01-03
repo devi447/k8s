@@ -22,7 +22,7 @@ spec:
             name: wordpress-secret
         volumeMounts:
         - name: wordpress-pvc
-            mountPath: /var/www/html/wp-content
+          mountPath: /var/www/html/wp-content
         - name: wp-config
           mountPath: /var/www/html/wp-config.php
           subPath: wp-config.php
