@@ -49,7 +49,7 @@ spec:
 
         volumeMounts:
         - name: wordpress-pvc
-          mountPath: /var/www/html/wp-content
+          mountPath: /var/www/html/wp-content/uploads
 
         - name: wp-config
           mountPath: /var/www/html/wp-config.php
