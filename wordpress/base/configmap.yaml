@@ -101,7 +101,7 @@ data:
 
     /** Absolute path to the WordPress directory. */
     if ( ! defined( 'ABSPATH' ) ) {
-        define( 'ABSPATH', __DIR__ . '/' );
+        define( 'ABSPATH', '/var/www/html/' );
     }
 
     /** Sets up WordPress vars and included files. */
