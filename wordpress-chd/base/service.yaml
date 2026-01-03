@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-chd
+spec:
+  selector:
+    app: wordpress-chd
+  ports:
+  - port: 80
+    targetPort: 80

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-chd
+  labels:
+    app: wordpress-chd
+spec:
+  replicas: 1
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
+  selector:
+    matchLabels:
+      app: wordpress-chd
+
+  template:
+    metadata:
+      labels:
+        app: wordpress-chd
+    spec:
+      # 🔹 REQUIRED FIX (THIS IS THE KEY)
+      securityContext:
+        fsGroup: 33   # www-data
+
+      containers:
+      - name: wordpress
+        image: devidevops447/wordpress-beta:latest
+
+        ports:
+        - containerPort: 80
+
+        # Resource limits
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+        # Environment variables
+        envFrom:
+        - secretRef:
+            name: wordpress-chd-secret
+
+        volumeMounts:
+        - name: wordpress-chd-pvc
+          mountPath: /var/www/html/wp-content/uploads
+
+        - name: wp-config
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+
+      volumes:
+      - name: wordpress-chd-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-chd-pvc
+
+      - name: wp-config
+        configMap:
+          name: wp-config
