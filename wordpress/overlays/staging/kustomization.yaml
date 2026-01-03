@@ -1,11 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+namespace: wordpress-stage
+namePrefix: stage-
+
 resources:
-- ../../base/
+- ../../base
 - ingress.yaml
-- configmap.yaml
-namePrefix: stg-
-namespace: nexus
+
 images:
-- name: registry.gitlab.farenexushub.com/nexus/drupal/drupal
-  newTag: f0047238
+- name: devidevops447/wordpress-beta
+  newTag: STAGE_IMAGE_TAG

@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wordpress-deployment
-  namespace: workshop
+  name: wordpress
 spec:
   replicas: 1
   selector:
@@ -13,58 +12,25 @@ spec:
       labels:
         app: wordpress
     spec:
-      initContainers:
-      - name: init-permissions
-        image: busybox
-        command:
-          - sh
-          - -c
-          - |
-            mkdir -p /var/www/html/wp-content/uploads &&
-            chown -R 33:33 /var/www/html/wp-content &&
-            chmod -R 775 /var/www/html/wp-content
-        volumeMounts:
-        - name: wordpress-pvc
-          mountPath: /var/www/html/wp-content/uploads
-
       containers:
       - name: wordpress
-        image: devidevops447/wordpress-beta:v323232
+        image: devidevops447/wordpress-beta:latest
         ports:
         - containerPort: 80
+        envFrom:
+        - secretRef:
+            name: wordpress-secret
         volumeMounts:
         - name: wordpress-pvc
           mountPath: /var/www/html/wp-content/uploads
-        - name: wp-config-volume
+        - name: wp-config
           mountPath: /var/www/html/wp-config.php
           subPath: wp-config.php
-        env:
-        - name: WORDPRESS_DB_HOST
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_HOST
-        - name: WORDPRESS_DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_NAME
-        - name: WORDPRESS_DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_USER
-        - name: WORDPRESS_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: WORDPRESS_DB_PASSWORD
 
       volumes:
       - name: wordpress-pvc
         persistentVolumeClaim:
           claimName: wordpress-pvc
-
-      - name: wp-config-volume
+      - name: wp-config
         configMap:
           name: wp-config
