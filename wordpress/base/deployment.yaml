@@ -22,6 +22,10 @@ spec:
       labels:
         app: wordpress
     spec:
+      # 🔹 REQUIRED FIX (THIS IS THE KEY)
+      securityContext:
+        fsGroup: 33   # www-data
+
       containers:
       - name: wordpress
         image: devidevops447/wordpress-beta:latest
@@ -29,7 +33,7 @@ spec:
         ports:
         - containerPort: 80
 
-        # Resource limits (aligned with Drupal)
+        # Resource limits
         resources:
           requests:
             cpu: 300m
@@ -38,7 +42,7 @@ spec:
             cpu: 500m
             memory: 1Gi
 
-        # Environment variables from Secret
+        # Environment variables
         envFrom:
         - secretRef:
             name: wordpress-secret
@@ -59,7 +63,3 @@ spec:
       - name: wp-config
         configMap:
           name: wp-config
-
-      # OPTIONAL (only if image is private)
-      # imagePullSecrets:
-      # - name: dockerhub-secret
