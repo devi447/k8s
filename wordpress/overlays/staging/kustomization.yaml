@@ -10,4 +10,4 @@ resources:
 
 images:
 - name: devidevops447/wordpress-beta
-  newTag: v4444444
+  newTag: v1

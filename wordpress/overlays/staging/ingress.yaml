@@ -3,18 +3,13 @@ kind: Ingress
 metadata:
   name: wordpress
   annotations:
-    alb.ingress.kubernetes.io/group.name: demo-lb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /wp-login.php
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/ssl-redirect: "443"
 spec:
   ingressClassName: alb
   rules:
-  - host: stage.wordpress.showmysite.click
+  - host: stage.wordpress.example.com
     http:
       paths:
       - path: /
