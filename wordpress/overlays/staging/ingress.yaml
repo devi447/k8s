@@ -3,17 +3,20 @@ kind: Ingress
 metadata:
   name: wordpress
   annotations:
-    #alb.ingress.kubernetes.io/scheme: internet-facing
-    #alb.ingress.kubernetes.io/target-type: ip
-    #alb.ingress.kubernetes.io/healthcheck-path: /wp-login.php
-
     alb.ingress.kubernetes.io/group.name: demo-lb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/ae31f616-6d4b-4eac-a858-f92e35c35582
+
+    # ✅ Health check (IMPORTANT)
+    alb.ingress.kubernetes.io/healthcheck-path: /wp-login.php
+
+    # ✅ HTTP + HTTPS
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+
+    # ✅ SSL
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/ae31f616-6d4b-4eac-a858-f92e35c35582
     alb.ingress.kubernetes.io/ssl-redirect: "443"
+
 spec:
   ingressClassName: alb
   rules:
