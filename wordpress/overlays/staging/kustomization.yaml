@@ -10,4 +10,4 @@ resources:
 
 images:
 - name: devidevops447/wordpress-beta
-  newTag: STAGE_IMAGE_TAG
+  newTag: v4444444
