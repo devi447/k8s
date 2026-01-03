@@ -10,7 +10,14 @@ data:
     define('DB_PASSWORD', getenv('WORDPRESS_DB_PASSWORD'));
     define('DB_HOST', getenv('WORDPRESS_DB_HOST'));
 
+    /**
+     * WordPress database table prefix.
+     * Must NOT be empty.
+     */
+    $table_prefix = 'wp_';
+
     if ( ! defined('ABSPATH') ) {
         define('ABSPATH', '/var/www/html/');
     }
+
     require_once ABSPATH . 'wp-settings.php';
