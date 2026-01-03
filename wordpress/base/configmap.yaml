@@ -23,8 +23,8 @@ data:
     /**
      * 🔐 FORCE HTTPS SITE URL (VERY IMPORTANT)
      */
-    define('WP_HOME', 'https://wordpress.showmysite.click');
-    define('WP_SITEURL', 'https://wordpress.showmysite.click');
+    define('WP_HOME', 'https://wordpress.stg.showmysite.click');
+    define('WP_SITEURL', 'https://wordpress.stg.showmysite.click');
 
     /**
      * Handle HTTPS correctly behind AWS ALB
