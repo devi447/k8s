@@ -2,11 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
+  labels:
+    app: wordpress
 spec:
   replicas: 1
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
   selector:
     matchLabels:
       app: wordpress
+
   template:
     metadata:
       labels:
@@ -15,14 +25,28 @@ spec:
       containers:
       - name: wordpress
         image: devidevops447/wordpress-beta:latest
+
         ports:
         - containerPort: 80
+
+        # Resource limits (aligned with Drupal)
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+        # Environment variables from Secret
         envFrom:
         - secretRef:
             name: wordpress-secret
+
         volumeMounts:
         - name: wordpress-pvc
           mountPath: /var/www/html/wp-content
+
         - name: wp-config
           mountPath: /var/www/html/wp-config.php
           subPath: wp-config.php
@@ -31,6 +55,11 @@ spec:
       - name: wordpress-pvc
         persistentVolumeClaim:
           claimName: wordpress-pvc
+
       - name: wp-config
         configMap:
           name: wp-config
+
+      # OPTIONAL (only if image is private)
+      # imagePullSecrets:
+      # - name: dockerhub-secret
