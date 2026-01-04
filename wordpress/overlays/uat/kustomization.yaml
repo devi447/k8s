@@ -7,6 +7,9 @@ namePrefix: uat-
 resources:
 - ../../base
 - ingress.yaml
+- pvc.yaml
+- secret.yaml
+- configmap.yaml
 
 images:
 - name: devidevops447/wordpress-beta

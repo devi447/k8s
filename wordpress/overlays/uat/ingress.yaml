@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wordpress
+  name: wordpress-uat
   annotations:
     alb.ingress.kubernetes.io/group.name: demo-lb
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -20,13 +20,13 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: wordpress-uat.stg.showmysite.click
+  - host: wordpress-uat.showmysite.click
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: stage-wordpress-uat
+            name: wordpress-uat
             port:
               number: 80

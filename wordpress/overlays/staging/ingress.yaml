@@ -20,7 +20,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: wordpress.stg.showmysite.click
+  - host: wordpress-stage.showmysite.click
     http:
       paths:
       - path: /
