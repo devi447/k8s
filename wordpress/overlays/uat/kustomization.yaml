@@ -10,6 +10,7 @@ resources:
 - pvc.yaml
 - secret.yaml
 - configmap.yaml
+- namespace.yaml
 
 images:
 - name: devidevops447/wordpress-beta
