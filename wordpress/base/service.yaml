@@ -13,10 +13,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: wordpress
+  name: wordpress-uat
 spec:
   selector:
-    app: wordpress
+    app: wordpress-uat
   ports:
   - port: 8082
     targetPort: 8082
