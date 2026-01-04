@@ -7,6 +7,11 @@ namePrefix: stage-
 resources:
 - ../../base
 - ingress.yaml
+- secret.yaml
+- pvc.yaml
+- configmap.yaml
+- service.yaml
+- namespace.yaml
 
 images:
 - name: devidevops447/wordpress-beta
