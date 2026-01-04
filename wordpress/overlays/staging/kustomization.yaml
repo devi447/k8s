@@ -14,4 +14,4 @@ resources:
 
 images:
 - name: devidevops447/wordpress-beta
-  newTag: v2323232
+  newTag: v22
