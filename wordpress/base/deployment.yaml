@@ -63,3 +63,73 @@ spec:
       - name: wp-config
         configMap:
           name: wp-config
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-uat
+  labels:
+    app: wordpress-uat
+spec:
+  replicas: 1
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
+  selector:
+    matchLabels:
+      app: wordpress-uat
+
+  template:
+    metadata:
+      labels:
+        app: wordpress-uat
+    spec:
+      # 🔹 REQUIRED FIX (THIS IS THE KEY)
+      securityContext:
+        fsGroup: 33   # www-data
+
+      containers:
+      - name: wordpress-uat
+        image: devidevops447/wordpress-beta:latest
+
+        ports:
+        - containerPort: 8082
+
+        # Resource limits
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+        # Environment variables
+        envFrom:
+        - secretRef:
+            name: wordpress-uat-secret
+
+        volumeMounts:
+        - name: wordpress-uat-pvc
+          mountPath: /var/www/html/wp-content/uploads
+
+        - name: wp-config
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+
+      volumes:
+      - name: wordpress-uat-pvc
+        persistentVolumeClaim:
+          claimName: wordpress-uat-pvc
+
+      - name: wp-config
+        configMap:
+          name: wp-config
+
+---
