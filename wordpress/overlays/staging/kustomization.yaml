@@ -10,7 +10,6 @@ resources:
 - secret.yaml
 - pvc.yaml
 - configmap.yaml
-- service.yaml
 - namespace.yaml
 
 images:
