@@ -99,7 +99,7 @@ spec:
         image: devidevops447/wordpress-beta:latest
 
         ports:
-        - containerPort: 8082
+        - containerPort: 80
 
         # Resource limits
         resources:
