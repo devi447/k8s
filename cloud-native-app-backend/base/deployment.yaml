@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-native-app-backend
+  labels:
+    app: cloud-native-app-backend
+spec:
+  replicas: 1
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
+  selector:
+    matchLabels:
+      app: cloud-native-app-backend
+
+  template:
+    metadata:
+      labels:
+        app: cloud-native-app-backend
+    spec:
+      # 🔹 REQUIRED FIX (THIS IS THE KEY)
+      securityContext:
+        fsGroup: 33   # www-data
+
+      containers:
+      - name: cloud-native-app-backend
+        image: devidevops447/cloud-native-app-backend:latest
+
+        ports:
+        - containerPort: 80
+
+        # Resource limits
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+
