@@ -6,5 +6,5 @@ spec:
   selector:
     app: cloud-native-app-backend
   ports:
-  - port: 8080            # ✅ Ingress talks on 8080
+  - port: 80            # ✅ Ingress talks on 8080
     targetPort: 8080    # ✅ Forward to Next.js
