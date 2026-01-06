@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: uat
+namePrefix: uat-
+
+resources:
+- ../../base
+- ingress.yaml
+- pvc.yaml
+- secret.yaml
+- configmap.yaml
+- namespace.yaml
+
+images:
+- name: devidevops447/wordpress-beta
+  newTag: v66
