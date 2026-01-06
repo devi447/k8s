@@ -1,24 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
-  namespace: wanderlust
+  name: cloud-native-app-backend
   labels:
-    app: backend
+    app: cloud-native-app-backend
 spec:
   replicas: 1
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
   selector:
     matchLabels:
-      app: backend
+      app: cloud-native-app-backend
+
   template:
     metadata:
-      name: backend
       labels:
-        app: backend
+        app: cloud-native-app-backend
     spec:
+      # 🔹 REQUIRED FIX (THIS IS THE KEY)
+      securityContext:
+        fsGroup: 33   # www-data
+
       containers:
-        - name: backend
-          image: devidevops447/cloud-native-app-backend-beta:latest
-          ports:
-            - containerPort: 8080
-            
+      - name: cloud-native-app-backend
+        image: devidevops447/cloud-native-app-backend-beta:latest
+        ports:
+        - containerPort: 8080
+
+        # Resource limits
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+

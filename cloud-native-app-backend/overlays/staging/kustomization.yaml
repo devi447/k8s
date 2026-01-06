@@ -10,5 +10,5 @@ resources:
 - namespace.yaml
 
 images:
-- name: devidevops447/worcloud-native-app-backend-beta
+- name: devidevops447/cloud-native-app-backend-beta
   newTag: v77
