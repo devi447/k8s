@@ -7,12 +7,6 @@ metadata:
 spec:
   replicas: 1
 
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
-
   selector:
     matchLabels:
       app: cloud-native-app-frontend
@@ -22,17 +16,12 @@ spec:
       labels:
         app: cloud-native-app-frontend
     spec:
-      # 🔹 REQUIRED FIX (THIS IS THE KEY)
-      securityContext:
-        fsGroup: 33   # www-data
-
       containers:
       - name: cloud-native-app-frontend
         image: devidevops447/cloud-native-app-frontend-beta:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 3000   # ✅ FIX
 
-        # Resource limits
         resources:
           requests:
             cpu: 300m
@@ -40,4 +29,3 @@ spec:
           limits:
             cpu: 500m
             memory: 1Gi
-

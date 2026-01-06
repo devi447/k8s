@@ -7,13 +7,11 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
 
-    # ✅ Health check (IMPORTANT)
-    alb.ingress.kubernetes.io/healthcheck-path: /wp-login.php
+    # ✅ FIXED health check
+    alb.ingress.kubernetes.io/healthcheck-path: /
 
-    # ✅ HTTP + HTTPS
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
 
-    # ✅ SSL
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
     alb.ingress.kubernetes.io/ssl-redirect: "443"
 
@@ -29,4 +27,4 @@ spec:
           service:
             name: stage-cloud-native-app-frontend
             port:
-              number: 8080
+              number: 80
