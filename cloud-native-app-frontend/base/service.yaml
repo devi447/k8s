@@ -7,3 +7,6 @@ spec:
     app: cloud-native-app-frontend
   ports:
   - port: 80          # 👈 Ingress talks here
+    targetPort: 3000  # 👈 App runs here
+
+  

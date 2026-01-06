@@ -25,4 +25,4 @@ spec:
           service:
             name: stage-cloud-native-app-frontend
             port:
-              number: 3000
+              number: 80
