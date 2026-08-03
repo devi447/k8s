@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: devidevops447/bharatyatra-frontend:v545454
+          image: devidevops447/bharatyatra-frontend:v2121
           imagePullPolicy: Always
           ports:
             - containerPort: 80
