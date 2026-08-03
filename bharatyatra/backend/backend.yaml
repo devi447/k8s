@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: backend-deployment
   namespace: bharatyatra
-  labels:
-    app: backend
 spec:
   replicas: 1
   selector:
@@ -12,15 +10,26 @@ spec:
       app: backend
   template:
     metadata:
-      name: backend
       labels:
         app: backend
     spec:
       containers:
-        - name: backend
-          image: devidevops447/bharatyatra-backend:vv88
-          ports:
-            - containerPort: 5000
+      - name: backend
+        image: devidevops447/bharatyatra-backend:vvv555
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 5000
+
+        env:
+        - name: PORT
+          value: "5000"
+
+        - name: MONGO_URI
+          value: "mongodb://mongodb-service:27017/bharatyatra"
+
+        - name: JWT_SECRET
+          value: "bharatyatra123"
 ---
 apiVersion: v1
 kind: Service
