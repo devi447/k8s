@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: devidevops447/bharatyatra-backend:v2.5
+          image: devidevops447/bharatyatra-backend:vvv555
           ports:
             - containerPort: 8080
 ---
