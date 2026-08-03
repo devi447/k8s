@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: devidevops447/bharatyatra-frontend:v55555
+          image: devidevops447/bharatyatra-frontend:v99
           ports:
             - containerPort: 5173
 ---
