@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bharatyatra-ui
+  labels:
+    app: bharatyatra-ui
+spec:
+  selector:
+    matchLabels:
+      app: bharatyatra-ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: bharatyatra-ui
+    spec:
+      containers:
+        - name: bharatyatra-ui
+          image: devidevops447/bharatyatra-frontend:v555555666
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 300m
+              memory: 456Mi
+            limits:
+              cpu: 450m
+              memory: 868Mi
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bharatyatra-api
+  labels:
+    app: bharatyatra-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bharatyatra-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: bharatyatra-api
+    spec:
+      containers:
+        - name: bharatyatra-api
+          image: devidevops447/bharatyatra-backend:vvv555
+          ports:
+            - containerPort: 5000 
+          env:
+          - name: PORT
+            value: "5000"
+
+          - name: MONGO_URI
+            value: "mongodb://mongodb-service:27017/bharatyatra"
+
+          - name: JWT_SECRET
+            value: "bharatyatra123"
+
+
+          resources:
+            requests:
+              cpu: 450m
+              memory: 1052Mi
+            limits:
+              cpu: 2900m
+              memory: 7758Mi
+
