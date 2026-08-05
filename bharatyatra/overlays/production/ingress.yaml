@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wordpress-chd
+  name: bharatyatra
   annotations:
     alb.ingress.kubernetes.io/group.name: demo-lb
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -20,13 +20,13 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: wordpress-chd.stg.showmysite.click
+  - host: bharatyatra-ui.showmysite.click
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: stage-wordpress-chd
+            name: bharatyatra
             port:
               number: 80
