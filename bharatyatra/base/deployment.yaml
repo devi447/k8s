@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bharatyatra-ui
+  name: bharatyatra-ui:v.7676
   labels:
-    app: bharatyatra-ui
+    app: bharatyatra-ui:v.7676
 spec:
   selector:
     matchLabels:
-      app: bharatyatra-ui
+      app: bharatyatra-ui:v.7676
   strategy:
     rollingUpdate:
       maxSurge: 0
@@ -15,10 +15,10 @@ spec:
   template:
     metadata:
       labels:
-        app: bharatyatra-ui
+        app: bharatyatra-ui:v.7676
     spec:
       containers:
-        - name: bharatyatra-ui
+        - name: bharatyatra-ui:v.7676
           image: devidevops447/bharatyatra-frontend:v555555666
           ports:
             - containerPort: 80
