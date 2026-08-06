@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: bharatyatra-ui
-          image: devidevops447/bharatyatra-frontend:v3232
+          image: devidevops447/bharatyatra-frontend:v50005
           ports:
             - containerPort: 80
           resources:
