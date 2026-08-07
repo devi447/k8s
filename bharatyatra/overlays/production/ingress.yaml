@@ -11,7 +11,7 @@ metadata:
 
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/ae31f616-6d4b-4eac-a858-f92e35c35582
 
-    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"m
 
 spec:
   ingressClassName: alb
@@ -36,6 +36,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: production-bharatyatra-api-service
+            name: stage-bharatyatra-api-service
             port:
               number: 5000
