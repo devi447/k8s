@@ -10,4 +10,4 @@ resources:
 
 images:
 - name: devidevops447/bharatyatra-backend
-  newTag: 1111
+  newTag: v4411
