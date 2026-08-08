@@ -1,14 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: bharatyatra
+  name: mainlb
+  namespace: bharatyatra
   annotations:
-    alb.ingress.kubernetes.io/group.name: demo-lb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/ae31f616-6d4b-4eac-a858-f92e35c35582
-    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
 spec:
   ingressClassName: alb
   rules:
@@ -22,14 +20,3 @@ spec:
               name: prod-bharatyatra-ui-service
               port:
                 number: 80
-
-    - host: bharatyatra-api.showmysite.click
-      http:
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: prod-bharatyatra-api-service
-              port:
-                number: 5000
