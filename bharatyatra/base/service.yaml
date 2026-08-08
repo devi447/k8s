@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bharatyatra-ui-service
+  name: prod-bharatyatra-ui-service
   namespace: bharatyatra
 spec:
   type: NodePort
@@ -18,7 +18,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: bharatyatra-api-service
+  name: prod-bharatyatra-api-service
   namespace: bharatyatra
 spec:
   type: NodePort
