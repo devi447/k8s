@@ -4,7 +4,7 @@ metadata:
   name: prod-bharatyatra-ui-service
 spec:
   selector:
-    app: prod-bharatyatra-ui
+    app: bharatyatra-ui
   ports:
   - port: 80
     targetPort: 80
