@@ -38,12 +38,10 @@ kind: Ingress
 metadata:
   name: bharatyatra-api
   namespace: bharatyatra
-
   annotations:
     alb.ingress.kubernetes.io/group.name: demo-lb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-
     alb.ingress.kubernetes.io/healthcheck-path: /
 
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
@@ -63,6 +61,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bharatyatra-api-service
+                name: prod-bharatyatra-api-service
                 port:
                   number: 5000
