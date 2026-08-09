@@ -68,10 +68,16 @@ spec:
               value: "5000"
 
             - name: MONGO_URI
-              value: "mongodb://mongodb-service:27017/bharatyatra"
+              valueFrom:
+                secretKeyRef:
+                  name: bharatyatra-api-secret
+                  key: MONGO_URI
 
             - name: JWT_SECRET
-              value: "bharatyatra123"
+              valueFrom:
+                secretKeyRef:
+                  name: bharatyatra-api-secret
+                  key: JWT_SECRET
 
           resources:
             requests:
