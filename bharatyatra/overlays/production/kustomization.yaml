@@ -10,6 +10,6 @@ resources:
 
 images:
 - name: devidevops447/bharatyatra-backend
-  newTag: b11
+  newTag: v11
 - name: devidevops447/bharatyatra-frontend
   newTag: b12
