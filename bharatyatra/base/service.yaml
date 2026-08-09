@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: prod-bharatyatra-ui-service
+  name: bharatyatra-ui-service
 spec:
   selector:
     app: bharatyatra-ui
