@@ -11,3 +11,5 @@ resources:
 images:
 - name: devidevops447/bharatyatra-backend
   newTag: v2222
+- name: devidevops447/bharatyatra-frontend
+  newTag: version7878
