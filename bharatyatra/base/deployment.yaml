@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
         - name: bharatyatra-api
-          image: devidevops447/bharatyatra-backend:v11
+          image: devidevops447/bharatyatra-backend:v70001
 
           ports:
             - containerPort: 5000
