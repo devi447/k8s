@@ -1,26 +1,3 @@
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: bharatyatra-ui
-#   annotations:
-#     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/target-type: ip
-#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-# spec:
-#   ingressClassName: alb
-#   rules:
-#     - host: bharatyatra-ui.showmysite.click
-#       http:
-#         paths:
-#         - path: /
-#           pathType: Prefix
-#           backend:
-#             service:
-#               name: prod-bharatyatra-ui-service
-#               port:
-#                 number: 80
-
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -33,12 +10,12 @@ metadata:
     # ✅ Health check (IMPORTANT)
     alb.ingress.kubernetes.io/healthcheck-path: /
 
-    # ✅ HTTP + HTTPS
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+   # ✅ HTTP + HTTPS
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
 
     # ✅ SSL
-    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
-    # alb.ingress.kubernetes.io/ssl-redirect: "443"
+    #  alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:741616023974:certificate/a118ec68-3e2e-4be5-b61a-f3e66dcafda0
+    #  alb.ingress.kubernetes.io/ssl-redirect: "443"
 
 spec:
   ingressClassName: alb
