@@ -50,7 +50,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: prod-bharatyatra-ui-service
+            name: bharatyatra-ui-service
             port:
               number: 80
 
