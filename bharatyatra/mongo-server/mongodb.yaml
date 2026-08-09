@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo-deployment
-  namespace: workshop
+  namespace: bharatyatra
   labels:
     app: mongo
 spec:
@@ -12,13 +12,12 @@ spec:
       app: mongo
   template:
     metadata:
-      name: mongo
       labels:
         app: mongo
     spec:
       containers:
         - name: mongo
-          image: mongo
+          image: mongo:8
           ports:
             - containerPort: 27017
           volumeMounts:
@@ -30,11 +29,12 @@ spec:
             claimName: mongo-pvc
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-service
-  namespace: workshop
+  name: mongodb-service
+  namespace: bharatyatra
 spec:
   selector:
     app: mongo
