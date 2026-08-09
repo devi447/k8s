@@ -7,6 +7,7 @@ spec:
     app: bharatyatra-ui
   ports:
   - port: 80
+    targetPort: 80
 
 ---
 apiVersion: v1
