@@ -20,7 +20,6 @@ spec:
           image: mongo:8
           command:
             - mongod
-            - --auth
           ports:
             - containerPort: 27017
           volumeMounts:
