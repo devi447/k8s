@@ -61,6 +61,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prod-bharatyatra-api-service
+                name: bharatyatra-api-service
                 port:
                   number: 5000
