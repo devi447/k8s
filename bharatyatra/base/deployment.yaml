@@ -79,4 +79,4 @@ spec:
               memory: 1052Mi
             limits:
               cpu: 900m
-              memory: 77582048Mi
+              memory: 2048Mi
