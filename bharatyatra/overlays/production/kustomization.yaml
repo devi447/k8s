@@ -13,4 +13,4 @@ images:
 - name: devidevops447/bharatyatra-backend
   newTag: v4001
 - name: devidevops447/bharatyatra-frontend
-  newTag: b12
+  newTag: v2001
