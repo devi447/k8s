@@ -36,19 +36,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bharatyatra-api
+  namespace: bharatyatra
   labels:
     app: bharatyatra-api
+
 spec:
   replicas: 2
 
   selector:
     matchLabels:
       app: bharatyatra-api
-
-  strategy:
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
 
   template:
     metadata:
@@ -85,4 +82,4 @@ spec:
               memory: 1052Mi
             limits:
               cpu: 900m
-              memory: 2048Mi
+              memory: 2Gi
