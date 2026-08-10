@@ -108,7 +108,7 @@ spec:
         - name: bharatyatra-stage-ui
           image: devidevops447/bharatyatra-frontend:v2001
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           resources:
             requests:
               cpu: 300m
