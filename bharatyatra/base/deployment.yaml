@@ -83,3 +83,38 @@ spec:
             limits:
               cpu: 900m
               memory: 2Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bharatyatra-stage-ui
+  labels:
+    app: bharatyatra-stage-ui
+spec:
+  selector:
+    matchLabels:
+      app: bharatyatra-stage-ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: bharatyatra-stage-ui
+    spec:
+      containers:
+        - name: bharatyatra-stage-ui
+          image: devidevops447/bharatyatra-frontend:v2001
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 300m
+              memory: 456Mi
+            limits:
+              cpu: 450m
+              memory: 868Mi
+
+---

@@ -1,13 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: bharatyatra
 namePrefix: stage-
 
 resources:
 - ../../base
 - ingress.yaml
+- namespace.yaml
+- secret.yaml
 
-images:
-- name: devidevops447/bharatyatra-backend
-  newTag: v4000000000000
+- name: devidevops447/bharatyatra-frontend
+  newTag: v2001
