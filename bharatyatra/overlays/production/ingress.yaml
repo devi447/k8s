@@ -64,3 +64,37 @@ spec:
                 name: prod-bharatyatra-api-service
                 port:
                   number: 5000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bharatyatra-stage-ui
+  annotations:
+    alb.ingress.kubernetes.io/group.name: demo-lb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+
+    # ✅ Health check (IMPORTANT)
+    alb.ingress.kubernetes.io/healthcheck-path: /
+
+   # ✅ HTTP + HTTPS
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+
+    # ✅ SSL
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-2:741616023974:certificate/8ecd729f-3a13-4ba3-af6b-df214c5805b5
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+
+spec:
+  ingressClassName: alb
+  rules:
+  - host: bharatyatra-stage-ui.showmysite.click
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: bharatyatra-stage-ui-service
+            port:
+              number: 8080
